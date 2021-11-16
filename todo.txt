@@ -1,0 +1,5 @@
+Project Documentation: https://docs.google.com/document/d/15U5UKyyZzW7vYD5T9520Ue9KEplUZqwIHZ55dL2U1lY/edit?usp=sharing
+
+[X] Import dataset
+[] Give more information about the dataset. How many records we have?
+[] Delete stop words
