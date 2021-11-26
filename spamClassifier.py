@@ -13,11 +13,23 @@ df = df.iloc[:, :2]
 
 labels = df["v1"] # Get labels
 messages = df["v2"] # Get messages
+# print(labels)
+# print(messages)
 
 # Todo: How many records we have?
 
 # Get english stopwords list from nltk library. 179 stop words
-sw_nltk = stopwords.words('english')
-print(sw_nltk)
+stopwords_array = stopwords.words('english')
+#print(stopwords_array)
 
-# Remove stop words
+# Remove stop words from messages
+
+messages_stopwords_removed = []
+for message in messages:
+	words = [text for text in message.split() if message.lower() not in stopwords_array]
+	new_message = " ".join(words)
+
+	messages_stopwords_removed.append(new_message)
+
+print(messages[15])
+print(messages_stopwords_removed[15])
