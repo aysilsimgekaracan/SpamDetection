@@ -1,10 +1,10 @@
 import pandas as pd # Used for reading the csv data
 import nltk # Used for removing stop words from messages
 from nltk.corpus import stopwords
+import string # For punctuation
 
 df = pd.read_csv("spam.csv", encoding = 'latin-1')
 
-# 5572 row. 2 columns. 1-ham/spam 2-message
 #df.info()
 
 # There are some unwanted extra columns in the data file. To remove them,
@@ -19,17 +19,32 @@ messages = df["v2"] # Get messages
 # Todo: How many records we have?
 
 # Get english stopwords list from nltk library. 179 stop words
-stopwords_array = stopwords.words('english')
+#stopwords_array = stopwords.words('english')
 #print(stopwords_array)
 
+# STEP: Data preparation
 # Remove stop words from messages
+# Remove punctuation
 
-messages_stopwords_removed = []
+stopwords = stopwords.words("english")
+punctuations = string.punctuation
+
+stopwords_removed_messages = []
 for message in messages:
-	words = [text for text in message.split() if message.lower() not in stopwords_array]
-	new_message = " ".join(words)
-
-	messages_stopwords_removed.append(new_message)
-
+    words = []
+    for word in message.split():
+        word = word.lower()
+        if word not in stopwords:
+            chars = []
+            for char in word:
+                if char not in punctuations:
+                   chars.append(char)
+            
+            new_word = "".join(chars)
+            words.append(new_word) 
+    
+    new_message = " ".join(words)
+    stopwords_removed_messages.append(new_message)
+    
 print(messages[15])
-print(messages_stopwords_removed[15])
+print(stopwords_removed_messages[15])
