@@ -1,7 +1,13 @@
 import pandas as pd # Used for reading the csv data
-import nltk # Used for removing stop words from messages
 from nltk.corpus import stopwords
 import string # For punctuation
+from sklearn.preprocessing import LabelEncoder
+
+"""
+STEP 1
+
+DATA PREPARATION
+"""
 
 df = pd.read_csv("spam.csv", encoding = 'latin-1')
 
@@ -9,28 +15,30 @@ df = pd.read_csv("spam.csv", encoding = 'latin-1')
 
 # There are some unwanted extra columns in the data file. To remove them,
 df = df.iloc[:, :2]
-#print(df)
 
-labels = df["v1"] # Get labels
-messages = df["v2"] # Get messages
-# print(labels)
-# print(messages)
+df.columns = ['label', 'message'] # Change column names
 
-# Todo: How many records we have?
+# 0 = ham, 1 = spam
+encoder=LabelEncoder()
+df['label']=encoder.fit_transform(df['label'])
 
-# Get english stopwords list from nltk library. 179 stop words
-#stopwords_array = stopwords.words('english')
-#print(stopwords_array)
+df['message_length'] = df.message.apply(len)
 
-# STEP: Data preparation
-# Remove stop words from messages
-# Remove punctuation
 
 stopwords = stopwords.words("english")
-punctuations = string.punctuation
 
-stopwords_removed_messages = []
-for message in messages:
+def data_preparation(message):
+    """Removes stopwords and punctuations
+
+    Args:
+        message (string): message
+
+    Returns:
+        string: new cleaned message
+    """
+    # messages = df["message"] # Messages column
+    punctuations = string.punctuation
+
     words = []
     for word in message.split():
         word = word.lower()
@@ -38,13 +46,22 @@ for message in messages:
             chars = []
             for char in word:
                 if char not in punctuations:
-                   chars.append(char)
+                    chars.append(char)
             
             new_word = "".join(chars)
             words.append(new_word) 
     
     new_message = " ".join(words)
-    stopwords_removed_messages.append(new_message)
     
-print(messages[15])
-print(stopwords_removed_messages[15])
+    return new_message
+    
+
+# Add cleaned_messages to df
+df['cleaned_message'] = df.message.apply(data_preparation)
+print(df.head())
+
+"""
+STEP 2
+
+MODELLING
+"""
