@@ -2,6 +2,12 @@ import pandas as pd # Used for reading the csv data
 from nltk.corpus import stopwords
 import string # For punctuation
 from sklearn.preprocessing import LabelEncoder
+from sklearn.model_selection import train_test_split
+import numpy as np
+from keras.preprocessing.text import Tokenizer
+from keras.preprocessing import sequence
+from keras.models import Sequential
+from keras.layers import LSTM, Activation, Dense, Dropout, Input, Embedding, Flatten
 
 """
 STEP 1
@@ -16,14 +22,12 @@ df = pd.read_csv("spam.csv", encoding = 'latin-1')
 # There are some unwanted extra columns in the data file. To remove them,
 df = df.iloc[:, :2]
 
-df.columns = ['label', 'message'] # Change column names
-
-# 0 = ham, 1 = spam
+df.columns = ['target', 'message'] # Change column names
+# Sets ham to 0, spam to 1
 encoder=LabelEncoder()
-df['label']=encoder.fit_transform(df['label'])
+df['target']=encoder.fit_transform(df['target'])
 
-df['message_length'] = df.message.apply(len)
-
+# df['message_length'] = df.message.apply(len)
 
 stopwords = stopwords.words("english")
 
@@ -58,10 +62,24 @@ def data_preparation(message):
 
 # Add cleaned_messages to df
 df['cleaned_message'] = df.message.apply(data_preparation)
-print(df.head())
 
 """
 STEP 2
 
 MODELLING
 """
+targets = df.target
+messages = df.cleaned_message
+
+print(df.message[15])
+print(messages[15])
+
+# Split train and test data
+# - train_test_split -
+#   - Split arrays or matrices into random train and test subsets
+#   - test_size: should be between 0.0 and 1.0 and represent the proportion of the dataset to include in the test split
+#   - random_state: Controls the shuffling applied to the data before applying the split.
+#   - stratify: mmm
+"""
+messages_train, messages_test, targets_train, targets_test = train_test_split(messages, targets, test_size=0.2, random_state=20)
+
