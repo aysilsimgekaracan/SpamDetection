@@ -23,6 +23,8 @@ df = pd.read_csv("spam.csv", encoding = 'latin-1')
 df = df.iloc[:, :2]
 
 df.columns = ['target', 'message'] # Change column names
+
+
 # Sets ham to 0, spam to 1
 encoder=LabelEncoder()
 df['target']=encoder.fit_transform(df['target'])
@@ -71,15 +73,18 @@ MODELLING
 targets = df.target
 messages = df.cleaned_message
 
-print(df.message[15])
-print(messages[15])
-
 # Split train and test data
 # - train_test_split -
 #   - Split arrays or matrices into random train and test subsets
 #   - test_size: should be between 0.0 and 1.0 and represent the proportion of the dataset to include in the test split
 #   - random_state: Controls the shuffling applied to the data before applying the split.
 #   - stratify: mmm
-"""
+
 messages_train, messages_test, targets_train, targets_test = train_test_split(messages, targets, test_size=0.2, random_state=20)
+print("Lenght of messages_train: " + str(len(messages_train)))
+print("Lenght of messages_test: " + str(len(messages_test)))
+print("Lenght of targets_train: " + str(len(targets_train)))
+print("Lenght of targets_test: " + str(len(targets_test)))
+print("Ratio: " + str(100*len(messages_train)/(len(messages_train) + len(messages_test))))
+
 
