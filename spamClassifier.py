@@ -117,21 +117,19 @@ print(len(messages_test_features), len(messages_test_features[0]))
 model = Sequential()
 
 # Embedding layer
-model.add(Embedding(num_words, 50, input_length=max_len, trainable=True))
+model.add(Embedding(num_words, 32, input_length=max_len))
 
 # LSTM layer
-model.add(LSTM(100,return_sequences=True,dropout=0.5))
+model.add(LSTM(64))
 
 # Dense layer
-model.add(Dense(200,activation='relu',name='hl1'))
-model.add(Dense(100,activation='relu',name='hl2'))
-model.add(Dense(1,activation='sigmoid',name='ol')) 
+model.add(Dense(16 ,activation='relu'))
+model.add(Dropout(0.1))
+model.add(Dense(1,activation='sigmoid'))
     
 # Add loss function, metrics, optimizer
 model.compile(optimizer='adam', loss='binary_crossentropy',metrics=["accuracy"])
 
 print(model.summary())
 
-messages_train_features.shape,targets_train.shape # shape of train dataset
-messages_test_features.shape,targets_test.shape # shape of test dataset
 
