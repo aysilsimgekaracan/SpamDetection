@@ -1,3 +1,4 @@
+from email import message
 import pandas as pd # Used for reading the csv data
 from nltk.corpus import stopwords
 import string # For punctuation
@@ -53,6 +54,8 @@ def data_preparation(message):
             for char in word:
                 if char not in punctuations:
                     chars.append(char)
+                else:
+                    chars.append(" ")
             
             new_word = "".join(chars)
             words.append(new_word) 
@@ -65,6 +68,7 @@ def data_preparation(message):
 # Add cleaned_messages to df
 df['cleaned_message'] = df.message.apply(data_preparation)
 
+
 """
 STEP 2
 
@@ -72,6 +76,7 @@ MODELLING
 """
 targets = df.target
 messages = df.cleaned_message
+# print(df.cleaned_message[1084])
 
 # Split train and test data
 # - train_test_split -
@@ -81,10 +86,29 @@ messages = df.cleaned_message
 #   - stratify: mmm
 
 messages_train, messages_test, targets_train, targets_test = train_test_split(messages, targets, test_size=0.2, random_state=20)
-print("Lenght of messages_train: " + str(len(messages_train)))
-print("Lenght of messages_test: " + str(len(messages_test)))
-print("Lenght of targets_train: " + str(len(targets_train)))
-print("Lenght of targets_test: " + str(len(targets_test)))
-print("Ratio: " + str(100*len(messages_train)/(len(messages_train) + len(messages_test))))
 
+# mx = len(max(messages, key=len))
+
+# Tokenize and padding
+
+num_words = 50000 # The maximum number of words to keep, based on word frequency. 
+max_len = 91
+
+tokenizer = Tokenizer(num_words = num_words) 
+tokenizer.fit_on_texts(messages_train) # Updates internal vocabulary based on a list of texts.
+
+# Tokenize and paddin for train dataset
+
+messages_train_features = tokenizer.texts_to_sequences(messages_train) # Updates internal vocabulary based on a list of sequences.
+# print(len(max(messages_train_features, key=len))) 79
+messages_train_features = sequence.pad_sequences(messages_train_features, maxlen = max_len)
+
+# Tokenize and paddin for test dataset
+
+messages_test_features = tokenizer.texts_to_sequences(messages_test)
+# print(len(max(messages_test_features, key=len))) #91
+messages_test_features = sequence.pad_sequences(messages_test_features, maxlen = max_len)
+
+print(len(messages_train_features), len(messages_train_features[0]))
+print(len(messages_test_features), len(messages_test_features[0]))
 
