@@ -1,4 +1,5 @@
-from email import message
+# from email import message
+from tabnanny import verbose
 import pandas as pd # Used for reading the csv data
 from nltk.corpus import stopwords
 import string # For punctuation
@@ -8,7 +9,10 @@ import numpy as np
 from keras.preprocessing.text import Tokenizer
 from keras.preprocessing import sequence
 from keras.models import Sequential
-from keras.layers import LSTM, Activation, Dense, Dropout, Input, Embedding, Flatten
+from keras.layers import LSTM, Activation, Dense, Dropout, Input, Embedding
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.metrics import confusion_matrix
 
 """
 STEP 1
@@ -132,4 +136,36 @@ model.compile(optimizer='adam', loss='binary_crossentropy',metrics=["accuracy"])
 
 print(model.summary())
 
+# messages_train_features.shape,targets_train.shape # shape of train dataset
+# messages_test_features.shape,targets_test.shape # shape of test dataset
+
+
+"""
+# TRAINING 
+"""
+history=model.fit(messages_train_features,targets_train,batch_size=150,epochs=20, validation_data=(messages_test_features, targets_test))
+
+"""
+EVALUATION
+"""
+
+# Model Performansı
+
+plt.plot(history.history["accuracy"], "--")
+plt.plot(history.history["val_accuracy"])
+plt.title("Model Accuracy")
+plt.ylabel("Accuracy")
+plt.xlabel("epoch")
+plt.legend(["train", "test"], loc="upper left")
+plt.show()
+
+# Model Hatası
+
+plt.plot(history.history["loss"], "--")
+plt.plot(history.history["val_loss"])
+plt.title("Model Hatası")
+plt.ylabel("Hata")
+plt.xlabel("epoch")
+plt.legend(["train", "test"], loc="upper left")
+plt.show()
 
