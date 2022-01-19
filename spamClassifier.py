@@ -1,4 +1,5 @@
 # from email import message
+from random import sample
 from tabnanny import verbose
 import pandas as pd # Used for reading the csv data
 from nltk.corpus import stopwords
@@ -159,7 +160,7 @@ plt.xlabel("epoch")
 plt.legend(["train", "test"], loc="upper left")
 plt.show()
 
-# Model Hatası
+# # Model Hatası
 
 plt.plot(history.history["loss"], "--")
 plt.plot(history.history["val_loss"])
@@ -169,3 +170,40 @@ plt.xlabel("epoch")
 plt.legend(["train", "test"], loc="upper left")
 plt.show()
 
+accuracy = model.evaluate(messages_test_features,targets_test)
+print('Accuracy: {:0.3f}'.format(accuracy[1]*100))
+
+y_predict  = [1 if o>0.5 else 0 for o in model.predict(messages_test_features)]
+cf_matrix =confusion_matrix(targets_test,y_predict)
+print(cf_matrix)
+
+ax = sns.heatmap(cf_matrix, annot=True, cmap='Blues')
+
+ax.set_title('Confusion Matrix\n\n');
+ax.set_xlabel('\nPredicted Values')
+ax.set_ylabel('Actual Values ');
+
+ax.xaxis.set_ticklabels(['Not Spam','Spam'])
+ax.yaxis.set_ticklabels(['Not Spam','Spam'])
+
+plt.show()
+
+
+
+"""
+TRY WITH YOUR OWN INPUT
+"""
+sample_texts = ["Free entry in 2 a weekly competition to win FA Cup final tkts 21st May 2005",
+                "i'm not coming to home today",
+                "ok. i'm good",
+                "congratulations you won! sms YES on 54233 to win",
+               "Your 2004 account for 07XXXXXXXXX shows 786",
+               "Hey, call ur mom she is worried",
+               "YOU ARE CHOSEN TO RECEIVE A å£350 AWARD! Pls call claim to collect your award which you are selected to receive as a valued mobile customer."
+               ]
+sample_texts = [data_preparation(sentence) for sentence in sample_texts]
+
+txts = tokenizer.texts_to_sequences(sample_texts)
+txts = sequence.pad_sequences(txts, maxlen=max_len)
+preds = model.predict(txts, verbose=0)
+print(np.around(preds))
